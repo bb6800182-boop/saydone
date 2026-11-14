@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -15,16 +17,19 @@ android {
         versionName = "0.2.1"
     }
 
-    // 正式版簽章：金鑰路徑與密碼放在使用者的 ~/.gradle/gradle.properties（shengdewoxin.*），不進版控。
-    // 沒有設定的電腦照樣能編 debug 版，只是編不出簽好章的正式版。
-    val releaseStore = providers.gradleProperty("shengdewoxin.storeFile").orNull
+    // 簽章放在專案資料夾旁邊的 voice-assistant-signing（不進版控；用 Dropbox 同步，每台電腦都用同一份）：
+    // 正式版的金鑰與密碼寫在 signing.properties；開發版用那裡的 debug.keystore，換一台電腦編的開發版也能直接更新手機上的 App。
+    // 沒有這個資料夾的電腦照樣能編 debug 版（用 Android 預設的 debug 金鑰），只是編不出簽好章的正式版。
+    val signingDir = rootDir.resolveSibling("voice-assistant-signing")
+    val signing = Properties().apply { signingDir.resolve("signing.properties").takeIf { it.isFile }?.reader()?.use { load(it) } }
     signingConfigs {
-        if (releaseStore != null) {
+        signingDir.resolve("debug.keystore").takeIf { it.isFile }?.let { getByName("debug").storeFile = it }
+        signing.getProperty("storeFile")?.let { store ->
             create("release") {
-                storeFile = file(releaseStore)
-                storePassword = providers.gradleProperty("shengdewoxin.storePassword").get()
-                keyAlias = providers.gradleProperty("shengdewoxin.keyAlias").get()
-                keyPassword = providers.gradleProperty("shengdewoxin.keyPassword").get()
+                storeFile = signingDir.resolve(store)
+                storePassword = signing.getProperty("storePassword")
+                keyAlias = signing.getProperty("keyAlias")
+                keyPassword = signing.getProperty("keyPassword")
             }
         }
     }

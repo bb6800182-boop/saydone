@@ -46,16 +46,16 @@
    專案放在 Windows 的 Dropbox 裡時，編譯輸出會改放到 `%LOCALAPPDATA%\voice-assistant-build`（見 `build.gradle.kts`）。
 4. 打開 App，依設定頁完成「設為預設數位助理」與麥克風權限，再到系統設定把「按住電源鍵」改成「數位助理」。
 
-正式版（release）要自己的簽章金鑰：在使用者的 `~/.gradle/gradle.properties`（不是專案資料夾）加上
+正式版（release）要自己的簽章金鑰：在專案資料夾**旁邊**（不是裡面，才不會被 commit）建一個 `voice-assistant-signing` 資料夾，放金鑰檔和 `signing.properties`：
 
 ```properties
-shengdewoxin.storeFile=C:/Users/你的帳號/keys/shengdewoxin.jks
-shengdewoxin.storePassword=…
-shengdewoxin.keyAlias=…
-shengdewoxin.keyPassword=…
+storeFile=你的金鑰.jks
+storePassword=…
+keyAlias=…
+keyPassword=…
 ```
 
-再執行 `./gradlew assembleRelease`。金鑰與密碼不要放進版控。
+再執行 `./gradlew assembleRelease`。金鑰與密碼不要放進版控。那個資料夾裡也可以放一份 `debug.keystore`，在好幾台電腦編的開發版就是同一個簽章，可以直接更新手機上的 App。
 
 ## 需要的權限
 
