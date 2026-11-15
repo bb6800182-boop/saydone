@@ -60,9 +60,9 @@ object Llm {
     fun ask(c: Context, text: String, history: Boolean = true): Result {
         val p = Prefs.provider(c)
         val key = Prefs.key(c, p)
-        if (key.isEmpty()) return Result(null, "還沒設定 AI 金鑰，請到聲得我心設定填寫")
+        if (key.isEmpty()) return Result(null, L.t("還沒設定 AI 金鑰，請到聲得我心設定填寫", "No AI key yet. Add one in Say & Done settings"))
         val url = Prefs.endpoint(c, p)
-        if (!url.startsWith("https://")) return Result(null, "AI 網址要用 https:// 開頭")
+        if (!url.startsWith("https://")) return Result(null, L.t("AI 網址要用 https:// 開頭", "The AI address must start with https://"))
         val model = Prefs.model(c, p)
         val sys = system(Prefs.nickname(c))
         val msgs = JSONArray()
@@ -100,14 +100,14 @@ object Llm {
                 j.getJSONArray("choices").getJSONObject(0).getJSONObject("message").optString("content")
             }
             Log.i(TAG, "HTTP 200 $model 加速等級 $level，${System.currentTimeMillis() - t0} ms")
-            if (out.isBlank()) Result(null, "AI 沒有回應") else Result(out, null)
+            if (out.isBlank()) Result(null, L.t("AI 沒有回應", "No answer from the AI")) else Result(out, null)
         } catch (e: SocketTimeoutException) {
-            Result(null, "AI 回應逾時")
+            Result(null, L.t("AI 回應逾時", "The AI took too long to answer"))
         } catch (e: UnknownHostException) {
-            Result(null, "連不上網路")
+            Result(null, L.t("連不上網路", "No network connection"))
         } catch (e: Exception) {
             Log.w(TAG, "ask failed", e)
-            Result(null, "AI 連線失敗")
+            Result(null, L.t("AI 連線失敗", "Couldn't reach the AI"))
         }
     }
 
@@ -170,15 +170,56 @@ object Llm {
             ?.takeIf { it.isNotBlank() }?.take(200)
 
     private fun httpError(code: Int) = when (code) {
-        400 -> "AI 請求被拒絕"
-        401, 403 -> "AI 金鑰無效或沒有權限"
-        404 -> "找不到這個模型或網址"
-        429 -> "AI 用量超過上限，稍後再試"
-        in 500..599 -> "AI 服務暫時有問題"
-        else -> "AI 錯誤（$code）"
+        400 -> L.t("AI 請求被拒絕", "The AI rejected the request")
+        401, 403 -> L.t("AI 金鑰無效或沒有權限", "The AI key is invalid or lacks permission")
+        404 -> L.t("找不到這個模型或網址", "Model or address not found")
+        429 -> L.t("AI 用量超過上限，稍後再試", "AI usage limit reached. Try again later")
+        in 500..599 -> L.t("AI 服務暫時有問題", "The AI service is having problems")
+        else -> L.t("AI 錯誤（$code）", "AI error ($code)")
     }
 
-    private fun system(nickname: String): String {
+    private fun system(nickname: String): String = if (L.zh) systemZh(nickname) else systemEn(nickname)
+
+    private fun systemEn(nickname: String): String {
+        val nick = nickname.replace(Regex("[\\r\\n\"]"), "").take(Prefs.NICK_MAX)
+        val callMe = if (nick.isEmpty()) "" else "6. The user would like to be called \"$nick\": use it naturally in greetings, small talk and answers (not in every sentence)."
+        val now = ZonedDateTime.now()
+        val ts = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm (EEEE)", java.util.Locale.ENGLISH))
+        return """
+You are "Say & Done", a voice assistant on an Android phone. Turn what the user said into actions to run on the phone.
+Output one JSON object only: no markdown, no other text.
+Current time: $ts, time zone ${now.zone.id}.
+Format: {"say":"what to say back to the user","actions":[{"t":"action type", other parameters}]}
+Action types and parameters:
+- alarm {"h":0-23,"m":0-59,"label":"optional"}: set an alarm (24-hour clock)
+- timer {"sec":seconds,"label":"optional"}: timer, or a reminder in a few minutes
+- calendar {"title":"what","start":"YYYY-MM-DDTHH:mm","min":minutes}: a reminder or event on a given date and time (use this when a date is mentioned or it is more than 24 hours away)
+- open_app {"names":["most likely app name","alias or other name"]}
+- navigate {"q":"destination"}
+- call {"name":"contact name or phone number"}
+- flashlight {"on":true or false}
+- volume {"stream":"media|ring|alarm","level":0-100}, or {"stream":"media","delta":1 or -1}, or {"stream":"media","mute":true or false}
+- ringer {"mode":"normal|vibrate|silent"}: ring, vibrate or silent mode ("unmute" means normal)
+- brightness {"level":0-100} or {"delta":1 or -1}
+- dnd {"on":true or false}: Do Not Disturb
+- media {"cmd":"play|pause|next|prev"}: control what is playing
+- play {"q":"song, artist or playlist","app":"spotify|youtube music|youtube (optional)"}: play a given song or artist; for "my liked songs / my favorites" use {"liked":true}; if nothing specific is asked for, use media play
+- settings {"page":"wifi|bluetooth|internet|display|sound|battery|location|nfc|apps|main"}: open a settings page (Wi-Fi and Bluetooth cannot be switched directly, so use this)
+- search {"q":"keywords"}: web search
+- weather {"day":0 today, 1 tomorrow, 2 the day after,"place":"place","lat":latitude,"lon":longitude}: leave out place, lat and lon when no place is mentioned
+Rules:
+1. If an action can do it, give the action and keep "say" to one short sentence, e.g. "OK, I'll wake you at 7 AM".
+2. General questions, knowledge and small talk: "actions" is [] and you answer in "say", conversationally, in 40 words or fewer.
+3. For live information (news, stock prices, scores, opening hours) use search.
+4. If you did not catch it or something essential is missing: "actions" is [] and "say" asks a short question back.
+5. Several things in one sentence means several actions.
+Answer in English.
+$callMe
+""".trim()
+    }
+
+    private fun systemZh(nickname: String): String {
+
         // 稱呼是使用者自己填的，拿掉換行與引號再放進提示詞
         val nick = nickname.replace(Regex("[\\r\\n「」\"]"), "").take(Prefs.NICK_MAX)
         val callMe = if (nick.isEmpty()) "" else "6. 使用者希望你稱呼他「$nick」：打招呼、閒聊、回答問題時自然地稱呼（不用每句都叫）。"

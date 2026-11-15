@@ -79,8 +79,8 @@ class TriggerActivity : Activity() {
             // 偵錯：只看情境與規則判斷的結果，不執行任何動作
             // adb shell am start -n com.c520.shengdewoxin/.TriggerActivity --es dry "明天早上七點叫我"
             val r = Routines.match(this, dry)
-            val out = r?.let { "情境：" + it.acts.joinToString("、") { a -> Actions.describe(a) } }
-                ?: Quick.match(this, dry)?.toJson() ?: "交給 AI"
+            val out = r?.let { L.t("情境：", "Routine: ") + it.acts.joinToString(L.t("、", ", ")) { a -> Actions.describe(a) } }
+                ?: Quick.match(this, dry)?.toJson() ?: L.t("交給 AI", "left to the AI")
             Log.i("Dry", "「$dry」→ $out")
         } else if (!AssistService.show()) {
             startActivity(Intent(this, MainActivity::class.java))

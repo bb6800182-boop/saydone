@@ -17,8 +17,8 @@ class RoutineCard(private val a: Activity, private val ui: Ui) {
     private var editing: String? = null // 正在編輯的情境 id；NEW＝新增中
 
     val view: View = ui.cardHelp(
-        "情境",
-        "說出觸發語句，就依序做好幾件事，例如說「我到家了」就取消靜音、調大音量。回應裡的 {稱呼} 會換成你的稱呼。",
+        L.t("情境", "Routines"),
+        L.t("說出觸發語句，就依序做好幾件事，例如說「我到家了」就取消靜音、調大音量。回應裡的 {稱呼} 會換成你的稱呼。", "Say a trigger phrase and several things happen in order: for example \"I'm home\" unmutes the phone and turns the volume up. {name} in the reply is replaced with your name."),
         list,
     )
 
@@ -29,7 +29,7 @@ class RoutineCard(private val a: Activity, private val ui: Ui) {
             list.addView(editor(null), ui.lp(12))
         } else {
             list.addView(
-                ui.button("＋ 新增情境", primary = false) {
+                ui.button(L.t("＋ 新增情境", "+ Add routine"), primary = false) {
                     editing = NEW
                     render()
                 },
@@ -49,9 +49,9 @@ class RoutineCard(private val a: Activity, private val ui: Ui) {
         val title = r.triggers.joinToString("、")
         val sub = listOfNotNull(
             r.reply.takeIf { it.isNotBlank() }?.let { "「${Routines.fill(a, it)}」" },
-            if (r.commands.isNotEmpty()) "做 ${r.commands.size} 件事" else null,
+            if (r.commands.isNotEmpty()) L.t("做 ${r.commands.size} 件事", "${r.commands.size} actions") else null,
         ).joinToString("・")
-        contentDescription = "編輯情境：$title。$sub"
+        contentDescription = L.t("編輯情境：$title。$sub", "Edit routine: $title. $sub")
         addView(ui.text(title, 16f, bold = true))
         if (sub.isNotEmpty()) addView(ui.text(sub, 14f, R.color.ink_subtle), ui.lp(2))
         setOnClickListener {
@@ -62,9 +62,9 @@ class RoutineCard(private val a: Activity, private val ui: Ui) {
 
     private fun editor(start: Routine?): View {
         var cur = start // 儲存後換成新的內容，再按儲存才不會重複新增
-        val triggers = ui.field("例如：我到家了、我回來了", InputType.TYPE_CLASS_TEXT, max = 120)
-        val reply = ui.field("例如：{稱呼}，歡迎回家", InputType.TYPE_CLASS_TEXT, max = 80)
-        val cmds = ui.field("一行一句，例如：\n取消靜音\n媒體音量調到 70\n關閉勿擾", InputType.TYPE_CLASS_TEXT, max = 600, lines = 4)
+        val triggers = ui.field(L.t("例如：我到家了、我回來了", "e.g. I'm home, I am home"), InputType.TYPE_CLASS_TEXT, max = 120)
+        val reply = ui.field(L.t("例如：{稱呼}，歡迎回家", "e.g. {name}, welcome home"), InputType.TYPE_CLASS_TEXT, max = 80)
+        val cmds = ui.field(L.t("一行一句，例如：\n取消靜音\n媒體音量調到 70\n關閉勿擾", "One per line, for example:\nunmute\nset media volume to 70\nturn off do not disturb"), InputType.TYPE_CLASS_TEXT, max = 600, lines = 4)
         start?.let {
             triggers.setText(it.triggers.joinToString("、"))
             reply.setText(it.reply)
@@ -83,7 +83,7 @@ class RoutineCard(private val a: Activity, private val ui: Ui) {
                 show(result, "⚠ $it", R.color.ink)
                 return
             }
-            show(result, "翻譯指令中…", R.color.ink_subtle)
+            show(result, L.t("翻譯指令中…", "Working out the commands…"), R.color.ink_subtle)
             buttons.forEach { it.isEnabled = false }
             val app = a.applicationContext
             Bg.pool.execute {
@@ -93,7 +93,7 @@ class RoutineCard(private val a: Activity, private val ui: Ui) {
                     buttons.forEach { it.isEnabled = true }
                     val bad = compiled.withIndex().filter { it.value.error != null }
                     if (bad.isNotEmpty()) {
-                        show(result, bad.joinToString("\n") { "⚠ 第 ${it.index + 1} 行「${cs[it.index]}」：${it.value.error}" }, R.color.ink)
+                        show(result, bad.joinToString("\n") { L.t("⚠ 第 ${it.index + 1} 行「${cs[it.index]}」：${it.value.error}", "⚠ Line ${it.index + 1} \"${cs[it.index]}\": ${it.value.error}") }, R.color.ink)
                         return@runOnUiThread
                     }
                     val old = cur
@@ -103,16 +103,16 @@ class RoutineCard(private val a: Activity, private val ui: Ui) {
                     cur = r
                     editing = r.id
                     val what = r.acts.joinToString("\n") { "・" + Actions.describe(it) }
-                    show(result, "✓ 已儲存" + if (what.isEmpty()) "" else "，會做：\n$what", R.color.success)
+                    show(result, L.t("✓ 已儲存", "✓ Saved") + if (what.isEmpty()) "" else L.t("，會做：\n$what", ". It will:\n$what"), R.color.success)
                     if (test && !AssistService.show(Bundle().apply { putString(AssistSession.ARG_ROUTINE, r.id) })) {
-                        toast("請先完成「設為預設數位助理」才能試跑")
+                        toast(L.t("請先完成「設為預設數位助理」才能試跑", "Finish \"Make it your default assistant\" before a test run"))
                     }
                 }
             }
         }
-        val saveBtn = ui.button("儲存", true) { save(test = false) }
-        val testBtn = ui.button("儲存並試跑", false) { save(test = true) }
-        val closeBtn = ui.button("收起", false) {
+        val saveBtn = ui.button(L.t("儲存", "Save"), true) { save(test = false) }
+        val testBtn = ui.button(L.t("儲存並試跑", "Save and try"), false) { save(test = true) }
+        val closeBtn = ui.button(L.t("收起", "Close"), false) {
             editing = null
             render()
         }
@@ -124,9 +124,9 @@ class RoutineCard(private val a: Activity, private val ui: Ui) {
             orientation = LinearLayout.VERTICAL
             background = ui.box(R.color.surface_1, R.color.hairline_strong, 12)
             setPadding(ui.dp(16), ui.dp(4), ui.dp(16), ui.dp(16))
-            addView(ui.labeled("觸發語句（多個用「、」分開）", triggers))
-            addView(ui.labeled("回應（可用 {稱呼}）", reply))
-            addView(ui.labeled("要做的事（一行一句）", cmds))
+            addView(ui.labeled(L.t("觸發語句（多個用「、」分開）", "Trigger phrases (separate with commas)"), triggers))
+            addView(ui.labeled(L.t("回應（可用 {稱呼}）", "Reply (you can use {name})"), reply))
+            addView(ui.labeled(L.t("要做的事（一行一句）", "What to do (one per line)"), cmds))
             addView(result, ui.lp(8))
             addView(ui.row(saveBtn, testBtn), ui.lp(12))
             addView(ui.row(*second.toTypedArray()), ui.lp(8))
@@ -137,34 +137,34 @@ class RoutineCard(private val a: Activity, private val ui: Ui) {
     private fun deleteButton(r: Routine): Button {
         var armed = false
         lateinit var b: Button
-        b = ui.button("刪除", false) {
+        b = ui.button(L.t("刪除", "Delete"), false) {
             if (!armed) {
                 armed = true
-                b.text = "再按一次確認刪除"
+                b.text = L.t("再按一次確認刪除", "Tap again to delete")
                 b.postDelayed({
                     armed = false
-                    b.text = "刪除"
+                    b.text = L.t("刪除", "Delete")
                 }, 4000)
             } else {
                 Routines.save(a, Routines.all(a).filter { it.id != r.id })
                 editing = null
                 render()
-                toast("已刪除情境")
+                toast(L.t("已刪除情境", "Routine deleted"))
             }
         }
         return b
     }
 
     private fun validate(id: String?, triggers: List<String>, reply: String, cmds: List<String>): String? {
-        if (triggers.isEmpty()) return "請填觸發語句"
-        if (triggers.size > Routines.MAX_TRIGGERS) return "觸發語句最多 ${Routines.MAX_TRIGGERS} 個"
-        triggers.firstOrNull { Routines.key(it).length < 2 }?.let { return "觸發語句「$it」太短，至少要兩個字" }
-        triggers.firstOrNull { it.length > 20 }?.let { return "觸發語句「$it」太長，請在 20 字以內" }
+        if (triggers.isEmpty()) return L.t("請填觸發語句", "Enter a trigger phrase")
+        if (triggers.size > Routines.MAX_TRIGGERS) return L.t("觸發語句最多 ${Routines.MAX_TRIGGERS} 個", "Up to ${Routines.MAX_TRIGGERS} trigger phrases")
+        triggers.firstOrNull { Routines.key(it).length < 2 }?.let { return L.t("觸發語句「$it」太短，至少要兩個字", "Trigger phrase \"$it\" is too short") }
+        triggers.firstOrNull { it.length > 20 }?.let { return L.t("觸發語句「$it」太長，請在 20 字以內", "Trigger phrase \"$it\" is too long (20 characters at most)") }
         val others = Routines.all(a).filter { it.id != id }.flatMap { it.triggers }.map { Routines.key(it) }.toSet()
-        triggers.firstOrNull { Routines.key(it) in others }?.let { return "「$it」已經用在別的情境" }
-        if (reply.isEmpty() && cmds.isEmpty()) return "回應和要做的事至少填一個"
-        if (cmds.size > Routines.MAX_COMMANDS) return "要做的事最多 ${Routines.MAX_COMMANDS} 行"
-        cmds.firstOrNull { it.length > 60 }?.let { return "「${it.take(10)}…」太長，一行請在 60 字以內" }
+        triggers.firstOrNull { Routines.key(it) in others }?.let { return L.t("「$it」已經用在別的情境", "\"$it\" is already used by another routine") }
+        if (reply.isEmpty() && cmds.isEmpty()) return L.t("回應和要做的事至少填一個", "Fill in a reply or something to do")
+        if (cmds.size > Routines.MAX_COMMANDS) return L.t("要做的事最多 ${Routines.MAX_COMMANDS} 行", "Up to ${Routines.MAX_COMMANDS} lines of things to do")
+        cmds.firstOrNull { it.length > 60 }?.let { return L.t("「${it.take(10)}…」太長，一行請在 60 字以內", "\"${it.take(10)}…\" is too long (60 characters per line)") }
         return null
     }
 

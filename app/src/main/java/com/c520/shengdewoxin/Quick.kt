@@ -5,7 +5,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.time.LocalDateTime
 
-/** 常用指令用規則直接判斷，不必等 AI（0 延遲）；判斷不了的回 null，交給 AI。 */
+/** 常用指令用規則直接判斷，不必等 AI（0 延遲）；判斷不了的回 null，交給 AI。這個檔是中文規則，英文規則在 QuickEn.kt。 */
 object Quick {
     private const val N = "[0-9０-９零〇一二兩三四五六七八九十百]+"
     private val digit = mapOf(
@@ -38,7 +38,7 @@ object Quick {
         return total + cur
     }
 
-    fun clean(s: String): String = s.replace(noise, "").replace(lead, "").replace(tail, "")
+    fun clean(s: String): String = if (L.zh) s.replace(noise, "").replace(lead, "").replace(tail, "") else QuickEn.clean(s)
 
     /** 句子裡的時間長度（秒）：「1個半小時」「5分30秒」「半小時」。 */
     fun seconds(t: String): Int? {
@@ -77,6 +77,7 @@ object Quick {
 
     /** 念給人聽的時刻：「早上7點30分」。 */
     fun hm(h: Int, m: Int): String {
+        if (!L.zh) return QuickEn.hm(h, m)
         val period = when (h) {
             in 0..4 -> "凌晨"
             in 5..11 -> "早上"
@@ -89,7 +90,7 @@ object Quick {
     }
 
     /** 念給人聽的長度：「1小時30分鐘」。 */
-    fun dur(sec: Int): String = buildString {
+    fun dur(sec: Int): String = if (!L.zh) QuickEn.dur(sec) else buildString {
         val h = sec / 3600
         val m = sec % 3600 / 60
         val s = sec % 60
@@ -98,7 +99,10 @@ object Quick {
         if (s > 0) append("${s}秒")
     }
 
-    fun match(c: Context, raw: String): Plan? {
+    /** 手機語言是中文用中文規則，其他語言用英文規則（QuickEn）。 */
+    fun match(c: Context, raw: String): Plan? = if (L.zh) matchZh(c, raw) else QuickEn.match(c, raw)
+
+    private fun matchZh(c: Context, raw: String): Plan? {
         val t = clean(raw)
         if (t.isEmpty()) return null
 

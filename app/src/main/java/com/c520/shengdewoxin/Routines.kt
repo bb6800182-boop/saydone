@@ -18,7 +18,8 @@ class Routine(
 )
 
 object Routines {
-    const val NICK = "{稱呼}"
+    /** 回應裡代表稱呼的字：中文介面 {稱呼}，英文介面 {name}；兩種寫法都認。 */
+    val NICK: String get() = L.t("{稱呼}", "{name}")
     const val MAX_TRIGGERS = 5
     const val MAX_COMMANDS = 10
 
@@ -44,9 +45,9 @@ object Routines {
 
     /** 第一次使用時放一個範例：「我到家了」。三句都是規則看得懂的，不需要 AI。 */
     private fun seed(c: Context): List<Routine> {
-        val cmds = listOf("取消靜音", "媒體音量調到 70", "關閉勿擾")
+        val cmds = if (L.zh) listOf("取消靜音", "媒體音量調到 70", "關閉勿擾") else listOf("unmute", "set media volume to 70", "turn off do not disturb")
         val acts = cmds.flatMap { Quick.match(c, it)?.acts.orEmpty() }
-        val list = listOf(Routine(UUID.randomUUID().toString(), listOf("我到家了", "我回來了"), "$NICK，歡迎回家", cmds, acts))
+        val list = listOf(Routine(UUID.randomUUID().toString(), if (L.zh) listOf("我到家了", "我回來了") else listOf("I'm home", "I am home"), L.t("$NICK，歡迎回家", "$NICK, welcome home"), cmds, acts))
         Prefs.setRoutinesJson(c, toJson(list).toString())
         return list
     }
@@ -104,7 +105,7 @@ object Routines {
     /** 把回應裡的 {稱呼} 換成使用者的稱呼；沒設稱呼就連後面的逗號一起拿掉。 */
     fun fill(c: Context, s: String): String {
         val nick = Prefs.nickname(c)
-        return if (nick.isNotEmpty()) s.replace(NICK, nick) else s.replace(Regex("\\{稱呼\\}[，,、\\s]*"), "")
+        return if (nick.isNotEmpty()) s.replace("{稱呼}", nick).replace("{name}", nick) else s.replace(Regex("\\{(?:稱呼|name)\\}[，,、\\s]*"), "")
     }
 
     class Compiled(val acts: List<Act>, val error: String?)
@@ -113,8 +114,8 @@ object Routines {
     fun compile(c: Context, line: String): Compiled {
         Quick.match(c, line)?.let { if (it.acts.isNotEmpty()) return Compiled(it.acts, null) }
         val r = Llm.ask(c, line, history = false)
-        val out = r.text ?: return Compiled(emptyList(), r.error ?: "看不懂這句")
+        val out = r.text ?: return Compiled(emptyList(), r.error ?: L.t("看不懂這句", "I don't understand this line"))
         val acts = Plan.parse(out).acts.filter { it.t.isNotEmpty() }
-        return if (acts.isEmpty()) Compiled(emptyList(), "看不懂這句，換個說法試試") else Compiled(acts, null)
+        return if (acts.isEmpty()) Compiled(emptyList(), L.t("看不懂這句，換個說法試試", "I don't understand this line. Try saying it another way")) else Compiled(acts, null)
     }
 }

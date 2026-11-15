@@ -52,13 +52,13 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
         status = ui.text("", 14f, R.color.accent_text).apply {
             accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
         }
-        val gear = ui.text("設定", 14f, R.color.ink_muted).apply {
+        val gear = ui.text(L.t("設定", "Settings"), 14f, R.color.ink_muted).apply {
             gravity = Gravity.CENTER
             minHeight = ui.dp(48)
             minWidth = ui.dp(48)
             setPadding(ui.dp(16), 0, ui.dp(16), 0)
             background = ui.pressable(ui.box(R.color.surface_2, R.color.hairline_strong, 24))
-            contentDescription = "開啟聲得我心設定"
+            contentDescription = L.t("開啟聲得我心設定", "Open Say & Done settings")
             setOnClickListener {
                 hide()
                 start(settingsIntent())
@@ -86,7 +86,7 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
                 shape = GradientDrawable.OVAL
                 setColor(ui.col(R.color.accent))
             })
-            contentDescription = "再說一次"
+            contentDescription = L.t("再說一次", "Say it again")
             setOnClickListener { listen() }
         }
         val pad = ui.dp(24)
@@ -113,7 +113,7 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
         }
         return FrameLayout(c).apply {
             setBackgroundColor(ui.col(R.color.scrim))
-            contentDescription = "點空白處關閉助理"
+            contentDescription = L.t("點空白處關閉助理", "Tap outside to close the assistant")
             setOnClickListener { hide() }
             addView(card, FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, Gravity.BOTTOM))
             // 面板畫在導覽列後面，底部讓出導覽列的高度
@@ -174,12 +174,12 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
     private fun listen() {
         val my = reset()
         if (context.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            fail("需要麥克風權限，請到聲得我心設定授權", listOf("開啟聲得我心設定" to settingsIntent()))
+            fail(L.t("需要麥克風權限，請到聲得我心設定授權", "Microphone permission is needed. Allow it in Say & Done settings"), listOf(L.t("開啟聲得我心設定", "Open Say & Done settings") to settingsIntent()))
             return
         }
         val rec = sr ?: newRecognizer()?.also { sr = it }
         if (rec == null) {
-            fail("這支手機找不到語音辨識服務")
+            fail(L.t("這支手機找不到語音辨識服務", "No speech recognition service found on this phone"))
             return
         }
         rec.cancel()
@@ -187,13 +187,13 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
         rec.startListening(
             Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                .putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-TW")
+                .putExtra(RecognizerIntent.EXTRA_LANGUAGE, if (L.zh) "zh-TW" else java.util.Locale.getDefault().toLanguageTag())
                 .putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
                 .putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
                 .putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
         )
         val nick = Prefs.nickname(context)
-        setStatus(if (nick.isEmpty()) "請說…" else "$nick，請說…", R.color.accent_text)
+        setStatus(if (nick.isEmpty()) L.t("請說…", "Listening…") else L.t("$nick，請說…", "Listening, $nick…"), R.color.accent_text)
     }
 
     /** 明確指定 Google 的辨識服務（被設成預設助理後，系統預設辨識可能指到自己的空殼）。 */
@@ -221,7 +221,7 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
 
         override fun onEndOfSpeech() {
             if (my != gen) return
-            setStatus("辨識中…", R.color.ink_subtle)
+            setStatus(L.t("辨識中…", "Recognizing…"), R.color.ink_subtle)
             pulse(0f)
             if (partial.isNotBlank()) speculate(partial)
         }
@@ -252,23 +252,23 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
         pulse(0f)
         when (code) {
             SpeechRecognizer.ERROR_NO_MATCH, SpeechRecognizer.ERROR_SPEECH_TIMEOUT ->
-                fail("沒聽到，點麥克風再說一次", speak = false, hideAfter = 6_000L)
+                fail(L.t("沒聽到，點麥克風再說一次", "I didn't hear anything. Tap the mic to try again"), speak = false, hideAfter = 6_000L)
             SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS ->
-                fail("需要麥克風權限，請到聲得我心設定授權", listOf("開啟聲得我心設定" to settingsIntent()))
+                fail(L.t("需要麥克風權限，請到聲得我心設定授權", "Microphone permission is needed. Allow it in Say & Done settings"), listOf(L.t("開啟聲得我心設定", "Open Say & Done settings") to settingsIntent()))
             SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_NETWORK_TIMEOUT, SpeechRecognizer.ERROR_SERVER ->
-                fail("語音辨識連不上網路")
+                fail(L.t("語音辨識連不上網路", "Speech recognition can't reach the network"))
             SpeechRecognizer.ERROR_RECOGNIZER_BUSY ->
                 if (!busyRetried) {
                     busyRetried = true
                     sr?.cancel()
                     main.postDelayed({ listen() }, 300)
                 } else {
-                    fail("語音辨識忙碌中，請再試一次")
+                    fail(L.t("語音辨識忙碌中，請再試一次", "Speech recognition is busy. Please try again"))
                 }
             SpeechRecognizer.ERROR_SERVER_DISCONNECTED,
             SpeechRecognizer.ERROR_LANGUAGE_NOT_SUPPORTED,
             SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE -> switchRecognizer(code)
-            else -> fail("語音辨識失敗（代碼 $code），請再試一次")
+            else -> fail(L.t("語音辨識失敗（代碼 $code），請再試一次", "Speech recognition failed (code $code). Please try again"))
         }
     }
 
@@ -283,7 +283,7 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
             listen()
         } else {
             recIndex = 0
-            fail("語音辨識失敗（代碼 $code），請再試一次")
+            fail(L.t("語音辨識失敗（代碼 $code），請再試一次", "Speech recognition failed (code $code). Please try again"))
         }
     }
 
@@ -306,11 +306,11 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
             val plan = if (quick != null) {
                 quick
             } else {
-                onMain(my) { setStatus("思考中…", R.color.ink_subtle) }
+                onMain(my) { setStatus(L.t("思考中…", "Thinking…"), R.color.ink_subtle) }
                 val r = takeSpec(text) ?: Llm.ask(c, text)
                 val out = r.text
                 if (out == null) {
-                    onMain(my) { fail(r.error ?: "AI 沒有回應") }
+                    onMain(my) { fail(r.error ?: L.t("AI 沒有回應", "No answer from the AI")) }
                     return@execute
                 }
                 Llm.remember(text, out)
@@ -363,7 +363,7 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
         val my = reset()
         sr?.cancel()
         heard.text = r.triggers.firstOrNull().orEmpty()
-        setStatus("執行情境…", R.color.ink_subtle)
+        setStatus(L.t("執行情境…", "Running routine…"), R.color.ink_subtle)
         val c = context
         Bg.pool.execute { runRoutine(c, r, my) }
     }
@@ -382,19 +382,19 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
         val msg = listOf(say, infos).filter { it.isNotBlank() }.joinToString("。")
         val bad = done.count { it.error }
         if (bad == 0) {
-            setStatus("✓ 情境完成", R.color.success)
+            setStatus(L.t("✓ 情境完成", "✓ Routine done"), R.color.success)
             mic.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
         } else {
-            setStatus("有 $bad 項沒完成", R.color.ink_subtle)
+            setStatus(L.t("有 $bad 項沒完成", "$bad not done"), R.color.ink_subtle)
             mic.performHapticFeedback(HapticFeedbackConstants.REJECT)
         }
         val lines = done.filter { !it.info || it.error }.map { mark(it) }
-        showReply((listOf(msg.ifBlank { "情境完成" }) + lines).joinToString("\n"))
+        showReply((listOf(msg.ifBlank { L.t("情境完成", "Routine done") }) + lines).joinToString("\n"))
         val picks = done.firstOrNull { it.choices.isNotEmpty() }
         picks?.let { showChoices(it.choices) }
         for (res in done) {
             val i = res.intent ?: continue
-            if (!res.leave && !start(i, res.fallback)) appendReply("⚠ 找不到能處理的 App")
+            if (!res.leave && !start(i, res.fallback)) appendReply(L.t("⚠ 找不到能處理的 App", "⚠ No app can handle this"))
         }
         val my = gen
         Speaker.speak(context, msg) { if (my == gen) runLater(later, my, picks != null) }
@@ -413,7 +413,7 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
                 rs.forEach { appendReply(mark(it)) }
                 for (res in rs) {
                     val i = res.intent ?: continue
-                    if (!res.leave && !start(i, res.fallback)) appendReply("⚠ 找不到能處理的 App")
+                    if (!res.leave && !start(i, res.fallback)) appendReply(L.t("⚠ 找不到能處理的 App", "⚠ No app can handle this"))
                 }
                 val leave = rs.firstOrNull { it.leave && it.intent != null }
                 if (leave != null && !picks) {
@@ -421,7 +421,7 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
                         hide()
                         return@onMain
                     }
-                    appendReply("⚠ 找不到能處理的 App")
+                    appendReply(L.t("⚠ 找不到能處理的 App", "⚠ No app can handle this"))
                 }
                 autoHide(if (picks || rs.any { it.error }) 15_000L else 1_500L)
             }
@@ -438,17 +438,17 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
         val infos = rs.filter { it.info }
         val msg = when {
             err != null -> err.text
-            infos.isNotEmpty() -> infos.joinToString("。") { it.text }
+            infos.isNotEmpty() -> infos.joinToString(L.t("。", ". ")) { it.text }
             plan.say.isNotBlank() -> plan.say
-            rs.isNotEmpty() -> rs.joinToString("，") { it.text }
-            else -> "我不太確定要做什麼，可以換個說法嗎？"
+            rs.isNotEmpty() -> rs.joinToString(L.t("，", ", ")) { it.text }
+            else -> L.t("我不太確定要做什麼，可以換個說法嗎？", "I'm not sure what to do. Could you say it another way?")
         }
         if (err != null) {
-            setStatus("沒辦法完成", R.color.ink_subtle)
+            setStatus(L.t("沒辦法完成", "Couldn't do it"), R.color.ink_subtle)
             showReply("⚠ $msg")
             mic.performHapticFeedback(HapticFeedbackConstants.REJECT)
         } else {
-            setStatus("✓ 完成", R.color.success)
+            setStatus(L.t("✓ 完成", "✓ Done"), R.color.success)
             showReply(msg)
             mic.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
         }
@@ -456,7 +456,7 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
         // 先送不會離開畫面的（鬧鐘、計時），再送會打開別的 App 的
         for (r in rs) {
             val i = r.intent ?: continue
-            if (!r.leave && !start(i, r.fallback)) showReply("⚠ 找不到能處理的 App")
+            if (!r.leave && !start(i, r.fallback)) showReply(L.t("⚠ 找不到能處理的 App", "⚠ No app can handle this"))
         }
         val leave = rs.firstOrNull { it.leave && it.intent != null }
         if (leave != null && pick == null && err == null) {
@@ -464,7 +464,7 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
                 hide()
                 return
             }
-            showReply("⚠ 找不到能處理的 App")
+            showReply(L.t("⚠ 找不到能處理的 App", "⚠ No app can handle this"))
         }
         val talk = err != null || pick != null || rs.isEmpty() || rs.any { it.speak }
         val wait = when {
@@ -482,7 +482,7 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
         speak: Boolean = true,
         hideAfter: Long = 4_000L,
     ) {
-        setStatus("沒辦法完成", R.color.ink_subtle)
+        setStatus(L.t("沒辦法完成", "Couldn't do it"), R.color.ink_subtle)
         showReply("⚠ $msg")
         if (picks.isNotEmpty()) showChoices(picks)
         val wait = if (picks.isEmpty()) hideAfter else 15_000L
@@ -512,7 +512,7 @@ class AssistSession(context: Context) : VoiceInteractionSession(context) {
             val b = ui.button(label, primary = false) {
                 gen++ // 取消自動收起
                 Speaker.stop()
-                if (start(intent)) hide() else showReply("⚠ 找不到能處理的 App")
+                if (start(intent)) hide() else showReply(L.t("⚠ 找不到能處理的 App", "⚠ No app can handle this"))
             }
             b.gravity = Gravity.START or Gravity.CENTER_VERTICAL
             choices.addView(b, ui.lp(8))

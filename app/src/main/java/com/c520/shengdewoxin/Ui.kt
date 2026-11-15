@@ -137,12 +137,12 @@ class Ui(private val c: Context) {
         setTextColor(col(R.color.ink_subtle))
         background = pressable(box(R.color.surface_1, R.color.hairline_strong, 22))
         layoutParams = LinearLayout.LayoutParams(dp(44), dp(44)).apply { marginStart = dp(8) }
-        contentDescription = "${about}的說明"
-        stateDescription = "已收合"
+        contentDescription = L.t("${about}的說明", "About $about")
+        stateDescription = L.t("已收合", "Collapsed")
         setOnClickListener {
             val open = desc.visibility != View.VISIBLE
             desc.visibility = if (open) View.VISIBLE else View.GONE
-            stateDescription = if (open) "已展開" else "已收合"
+            stateDescription = if (open) L.t("已展開", "Expanded") else L.t("已收合", "Collapsed")
         }
     }
 
@@ -176,12 +176,12 @@ class Ui(private val c: Context) {
             addView(text(title, 16f, bold = true), LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f))
             summary?.let { addView(it, LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply { marginEnd = dp(8) }) }
             addView(chev)
-            stateDescription = if (open) "已展開" else "已收合"
+            stateDescription = if (open) L.t("已展開", "Expanded") else L.t("已收合", "Collapsed")
             setOnClickListener {
                 val o = body.visibility != View.VISIBLE
                 body.visibility = if (o) View.VISIBLE else View.GONE
                 chev.rotation = if (o) 180f else 0f
-                stateDescription = if (o) "已展開" else "已收合"
+                stateDescription = if (o) L.t("已展開", "Expanded") else L.t("已收合", "Collapsed")
             }
         }
         addView(head, lp())
@@ -206,12 +206,12 @@ class Ui(private val c: Context) {
             background = clear()
             addView(text(title, 16f, bold = true), LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f))
             addView(chev)
-            stateDescription = "已收合"
+            stateDescription = L.t("已收合", "Collapsed")
             setOnClickListener {
                 val o = b.visibility != View.VISIBLE
                 b.visibility = if (o) View.VISIBLE else View.GONE
                 chev.rotation = if (o) 180f else 0f
-                stateDescription = if (o) "已展開" else "已收合"
+                stateDescription = if (o) L.t("已展開", "Expanded") else L.t("已收合", "Collapsed")
             }
         }, lp())
         addView(b, lp())

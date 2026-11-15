@@ -1,4 +1,6 @@
-# 聲得我心
+# 聲得我心 Say & Done
+
+[English](#english)
 
 取代 Google 助理的 Android 語音助理，只做簡單的事，但做得快。長按電源鍵或在手機背面點兩下，說「明天早上七點叫我」「打開手電筒」「取消靜音」，馬上就做好。
 
@@ -23,6 +25,7 @@
 - **AI（選用）**：規則聽不懂的句子和一般問答，可以交給你自己的 AI 金鑰（Claude、DeepSeek、OpenAI，或其他 OpenAI 相容服務）。預設用最小、最快的模型並關掉「思考」，大約 1 秒回應。
 - **YouTube 金鑰（選用）**：填了免費的 YouTube Data API 金鑰，「播放周杰倫」會先查到歌，在 YT Music 直接播，播完自動接相似的歌。建議把金鑰限制成只能用 YouTube Data API v3、只給這個 App（App 設定頁列了套件名稱和 SHA-1）。
 - **外觀**：淺色、深色，或跟著系統。
+- **語言**：中文、英文，跟著手機的語言。英文手機上畫面、語音指令、回答都是英文（「Wake me at 7 tomorrow morning」「Turn on the flashlight」）。
 
 ## 還不會的事
 
@@ -81,3 +84,15 @@ keyPassword=…
 - 天氣資料來自 [Open-Meteo](https://open-meteo.com/)（CC BY 4.0）。
 - Android、Google、Gemini 是 Google LLC 的商標；Claude 是 Anthropic 的商標；OpenAI 是 OpenAI 的商標；DeepSeek 是其所屬公司的商標。本 App 是個人開發的獨立作品，與上述公司沒有關係，也沒有經過認可。
 - 設計系統見 [DESIGN.md](DESIGN.md)。
+
+## English
+
+**Say & Done** is a simple Android voice assistant that can replace Google Assistant for everyday commands. Hold the power button and say “wake me at 7 tomorrow morning”, “turn on the flashlight” or “unmute”, and it is done.
+
+- Common commands (alarms, timers, flashlight, volume, silent and vibrate, brightness, Do Not Disturb, music, opening apps, navigation, calls, time and weather) are handled on the phone, without a large AI model.
+- Routines: one phrase runs several actions.
+- Optional: your own Claude, DeepSeek or OpenAI key for sentences the rules do not understand.
+- English and Traditional Chinese; the app follows your phone’s language.
+- Free, MIT licensed, no data collection. Android 12 or later.
+
+Download and setup guide: https://c520.pages.dev/saydone/en/

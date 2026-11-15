@@ -11,6 +11,8 @@
 <meta property="og:description" content="只做簡單的事，但做得快。常用指令在手機上直接判斷，不需要呼叫大型 AI。">
 <meta property="og:url" content="https://c520.pages.dev/saydone/">
 <meta property="og:image" content="https://c520.pages.dev/saydone/icon-512.png">
+<link rel="alternate" hreflang="zh-Hant" href="https://c520.pages.dev/saydone/">
+<link rel="alternate" hreflang="en" href="https://c520.pages.dev/saydone/en/">
 <link rel="canonical" href="https://c520.pages.dev/saydone/">
 <meta name="theme-color" content="#F1F5F9">
 <meta name="color-scheme" content="light">
@@ -67,6 +69,8 @@ a:focus-visible, summary:focus-visible, .btn:focus-visible { outline: 3px solid 
 .home:hover { color: var(--ink); }
 .brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; font-weight: 600; }
 .brand img { width: 32px; height: 32px; border-radius: 8px; }
+.lang { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; color: var(--ink-subtle); font-size: 14px; text-decoration: none; }
+.lang:hover { color: var(--ink); }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 20px; border: 1px solid var(--primary); border-radius: 999px; background: var(--primary); color: var(--on-primary); font: 500 15px/1.2 var(--font); text-decoration: none; white-space: nowrap; }
 .btn:hover { background: #1E293B; border-color: #1E293B; }
 .btn.ghost { background: var(--surface-1); color: var(--ink); border-color: var(--hairline-strong); }
@@ -160,7 +164,8 @@ details[open] summary .ic { transform: rotate(180deg); }
 <header class="wrap top">
   <a class="home" href="/" aria-label="回 C520 首頁">C520</a>
   <div class="brand"><img src="icon.svg" alt="" width="32" height="32"><span>聲得我心</span></div>
-  <a class="btn" href="https://c520-dl.bb6800182.workers.dev/saydone/android" download="聲得我心-v0.3.0.apk">下載</a>
+  <a class="lang" href="en/" lang="en" hreflang="en">English</a>
+  <a class="btn" href="https://c520-dl.bb6800182.workers.dev/saydone/android" download="聲得我心-v0.4.0.apk">下載</a>
 </header>
 
 <main id="main" class="wrap" tabindex="-1">
@@ -171,10 +176,10 @@ details[open] summary .ic { transform: rotate(180deg); }
       <h1>聲得我心</h1>
       <p class="lead">只做簡單的事，但做得快。<br>長按電源鍵，說一句就幫你做好。</p>
       <div class="actions">
-        <a class="btn" href="https://c520-dl.bb6800182.workers.dev/saydone/android" download="聲得我心-v0.3.0.apk"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>下載 APK</a>
+        <a class="btn" href="https://c520-dl.bb6800182.workers.dev/saydone/android" download="聲得我心-v0.4.0.apk"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>下載 APK</a>
         <a class="btn ghost" href="https://github.com/bb6800182-boop/saydone" target="_blank" rel="noopener noreferrer"><svg class="ic" aria-hidden="true"><use href="#i-code"/></svg>原始碼<span class="sr-only">（GitHub，另開分頁）</span></a>
       </div>
-      <p class="meta">v0.3.0・約 180 KB・Android 12 以上<br>免費、MIT 開源・不需要 AI 也能用</p>
+      <p class="meta">v0.4.0・約 220 KB・Android 12 以上<br>免費、MIT 開源・不需要 AI 也能用</p>
     </div>
   </div>
 
@@ -243,6 +248,10 @@ details[open] summary .ic { transform: rotate(180deg); }
     <details id="faq-ai">
       <summary>一定要有 AI 金鑰嗎？要花錢嗎？<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></summary>
       <div class="faq-a"><p>不用。鬧鐘、計時、音量、靜音、手電筒、亮度、勿擾、音樂、開 App、導航、打電話、天氣和情境，都在手機上直接判斷。</p><p>填了金鑰，只有規則聽不懂的句子才會送出去，費用由你選的 AI 服務計算；預設用最小、最便宜的模型，每句的費用很低。</p></div>
+    </details>
+    <details id="faq-lang">
+      <summary>聽得懂哪些語言？<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></summary>
+      <div class="faq-a"><p>中文（國語）和英文，跟著手機的語言走：手機是中文，畫面、語音指令、回答都是中文；其他語言一律用英文。英文語音指令是 0.4.0 新加的。</p></div>
     </details>
     <details id="faq-lock">
       <summary>鎖定畫面可以用嗎？<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></summary>

@@ -9,16 +9,16 @@ enum class Provider(val label: String, val defModel: String, val defUrl: String)
     CLAUDE("Claude（Anthropic）", "claude-haiku-5-5", "https://api.anthropic.com/v1/messages"),
     DEEPSEEK("DeepSeek", "deepseek-flash", "https://api.deepseek.com/chat/completions"),
     OPENAI("OpenAI", "gpt-6-luna", "https://api.openai.com/v1/chat/completions"),
-    CUSTOM("其他（OpenAI 相容）", "", "");
+    CUSTOM(L.t("其他（OpenAI 相容）", "Other (OpenAI-compatible)"), "", "");
 
     val anthropic: Boolean get() = this == CLAUDE
 }
 
 /** 外觀：淺色（預設）、深色、跟隨系統。 */
 enum class Look(val label: String) {
-    LIGHT("淺色"),
-    DARK("深色"),
-    SYSTEM("跟隨系統"),
+    LIGHT(L.t("淺色", "Light")),
+    DARK(L.t("深色", "Dark")),
+    SYSTEM(L.t("跟隨系統", "System")),
 }
 
 /** 設定只存在本機（App 私有空間、不備份），金鑰不會離開這支手機。 */

@@ -33,8 +33,9 @@ object Speaker {
             pending = null
             return
         }
-        val r = t.setLanguage(Locale.TAIWAN)
-        if (r == TextToSpeech.LANG_MISSING_DATA || r == TextToSpeech.LANG_NOT_SUPPORTED) t.setLanguage(Locale.CHINESE)
+        // 念的語言跟著介面：中文手機念中文，其他念手機的語言（沒有語音資料就念英文）
+        val r = t.setLanguage(if (L.zh) Locale.TAIWAN else Locale.getDefault())
+        if (r == TextToSpeech.LANG_MISSING_DATA || r == TextToSpeech.LANG_NOT_SUPPORTED) t.setLanguage(if (L.zh) Locale.CHINESE else Locale.US)
         t.setAudioAttributes(
             AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_ASSISTANT)

@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Say &amp; Done | A simple voice assistant to replace Google Assistant</title>
+<meta name="description" content="An Android voice assistant for simple things: hold the power button and say it to set an alarm, turn on the flashlight, change the volume, call someone or open an app. Common commands are handled on the phone, with no large AI model. Free and open source.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Say &amp; Done | A simple voice assistant to replace Google Assistant">
+<meta property="og:description" content="It only does simple things, but it does them fast. Common commands are handled on the phone.">
+<meta property="og:url" content="https://c520.pages.dev/saydone/en/">
+<meta property="og:image" content="https://c520.pages.dev/saydone/icon-512.png">
+<link rel="alternate" hreflang="zh-Hant" href="https://c520.pages.dev/saydone/">
+<link rel="alternate" hreflang="en" href="https://c520.pages.dev/saydone/en/">
+<link rel="canonical" href="https://c520.pages.dev/saydone/en/">
+<meta name="theme-color" content="#F1F5F9">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<style>
+:root {
+  color-scheme: light;
+  --primary: #0F172A;
+  --on-primary: #FFFFFF;
+  --accent: #1E293B;
+  --on-accent: #5EEAD4;
+  --accent-text: #0F766E;
+  --canvas: #F1F5F9;
+  --surface-1: #FFFFFF;
+  --surface-2: #F1F5F9;
+  --hairline: #E2E8F0;
+  --hairline-strong: #CBD5E1;
+  --ink: #0F172A;
+  --ink-muted: #334155;
+  --ink-subtle: #475569;
+  --success: #15803D;
+  --font: Roboto, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 24px;
+  --s-xs: 8px;
+  --s-sm: 12px;
+  --s-md: 16px;
+  --s-lg: 20px;
+  --s-xl: 24px;
+  --s-xxl: 32px;
+  font: 400 15px/1.6 var(--font);
+  background: var(--canvas);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+h1, h2, h3, p, ol, ul { margin: 0; }
+a { color: var(--accent-text); text-underline-offset: 4px; }
+a:focus-visible, summary:focus-visible, .btn:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 3px; }
+.wrap { max-width: 960px; margin-inline: auto; padding-inline: var(--s-md); }
+.skip { position: absolute; left: 10px; top: 10px; z-index: 9; padding: 10px 16px; border-radius: 999px; background: var(--primary); color: var(--on-primary); transform: translateY(-200%); }
+.skip:focus { transform: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+.ic { width: 22px; height: 22px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.top { display: flex; align-items: center; gap: var(--s-md); min-height: 64px; border-bottom: 1px solid var(--hairline); }
+.home { display: inline-flex; align-items: center; min-height: 44px; padding-right: var(--s-md); border-right: 1px solid var(--hairline-strong); font: 500 17px/1 Georgia, serif; font-variant-numeric: lining-nums; color: var(--ink-subtle); text-decoration: none; }
+.home:hover { color: var(--ink); }
+.brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; font-weight: 600; }
+.brand img { width: 32px; height: 32px; border-radius: 8px; }
+.lang { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; color: var(--ink-subtle); font-size: 14px; text-decoration: none; }
+.lang:hover { color: var(--ink); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 20px; border: 1px solid var(--primary); border-radius: 999px; background: var(--primary); color: var(--on-primary); font: 500 15px/1.2 var(--font); text-decoration: none; white-space: nowrap; }
+.btn:hover { background: #1E293B; border-color: #1E293B; }
+.btn.ghost { background: var(--surface-1); color: var(--ink); border-color: var(--hairline-strong); }
+.btn.ghost:hover { background: var(--surface-2); }
+.top .btn { min-height: 40px; padding: 0 16px; font-size: 14px; }
+
+.hero { display: grid; grid-template-columns: auto 1fr; gap: var(--s-xxl); align-items: center; padding-block: 48px 40px; }
+.hero > img { width: 160px; height: 160px; border-radius: 36px; }
+.eyebrow { color: var(--accent-text); font-size: 13px; font-weight: 600; letter-spacing: .5px; }
+h1 { margin-top: 6px; font-size: 40px; line-height: 1.2; font-weight: 700; letter-spacing: .5px; }
+.lead { margin-top: var(--s-sm); font-size: 20px; line-height: 1.5; color: var(--ink-muted); }
+.actions { display: flex; flex-wrap: wrap; gap: var(--s-sm); margin-top: var(--s-xl); }
+.meta { margin-top: var(--s-sm); color: var(--ink-subtle); font-size: 13px; }
+
+section { padding-block: 36px; border-top: 1px solid var(--hairline); }
+h2 { font-size: 26px; line-height: 1.3; font-weight: 700; }
+.sub { margin-top: 6px; color: var(--ink-subtle); }
+.story { margin-top: var(--s-lg); padding: var(--s-xl); border-radius: var(--r-lg); background: var(--surface-1); border: 1px solid var(--hairline); font-size: 17px; line-height: 1.8; }
+.story p + p { margin-top: var(--s-sm); }
+.story strong { color: var(--ink); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--s-sm); margin-top: var(--s-lg); }
+.card { padding: var(--s-lg); border-radius: var(--r-lg); background: var(--surface-1); border: 1px solid var(--hairline); }
+.card .ic { color: var(--accent-text); }
+.card h3 { margin-top: 10px; font-size: 17px; line-height: 1.4; }
+.card p { margin-top: 4px; color: var(--ink-subtle); font-size: 14px; }
+.says { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; padding: 0; list-style: none; }
+.says li { padding: 4px 12px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--hairline); color: var(--ink-muted); font-size: 14px; }
+
+.flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-sm); margin-top: var(--s-lg); padding: 0; list-style: none; counter-reset: f; }
+.flow li { position: relative; padding: var(--s-lg); border-radius: var(--r-lg); background: var(--surface-1); border: 1px solid var(--hairline); }
+.flow b { display: block; color: var(--accent-text); font-size: 13px; }
+.flow span { display: block; margin-top: 6px; font-size: 16px; }
+
+.steps { margin-top: var(--s-lg); padding: 0; list-style: none; counter-reset: s; display: grid; gap: var(--s-sm); }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 36px 1fr; gap: var(--s-sm); padding: var(--s-md) var(--s-lg); border-radius: var(--r-lg); background: var(--surface-1); border: 1px solid var(--hairline); }
+.steps li::before { content: counter(s); display: grid; place-items: center; width: 32px; height: 32px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-weight: 700; }
+.steps b { display: block; }
+.steps span { display: block; color: var(--ink-subtle); font-size: 14px; }
+
+details { margin-top: var(--s-sm); border-radius: var(--r-md); background: var(--surface-1); border: 1px solid var(--hairline); }
+summary { display: flex; align-items: center; justify-content: space-between; gap: var(--s-sm); min-height: 52px; padding: 0 var(--s-lg); cursor: pointer; font-weight: 600; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+summary .ic { transition: transform .15s; color: var(--ink-subtle); }
+details[open] summary .ic { transform: rotate(180deg); }
+.faq-a { padding: 0 var(--s-lg) var(--s-lg); color: var(--ink-muted); }
+.faq-a p + p { margin-top: 8px; }
+
+.foot { padding-block: var(--s-xxl); border-top: 1px solid var(--hairline); color: var(--ink-subtle); font-size: 13px; }
+.foot p + p { margin-top: 8px; }
+
+@media (max-width: 720px) {
+  .hero { grid-template-columns: 1fr; gap: var(--s-lg); padding-block: 32px; }
+  .hero > img { width: 96px; height: 96px; border-radius: 22px; }
+  h1 { font-size: 34px; }
+  .lead { font-size: 18px; }
+  .flow { grid-template-columns: 1fr; }
+  .story { padding: var(--s-lg); font-size: 16px; }
+}
+@media (max-width: 400px) {
+  .brand span { display: none; }
+  .actions .btn { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<svg class="defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <symbol id="i-power" viewBox="0 0 24 24"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></symbol>
+  <symbol id="i-tap" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M3.5 9.5a8 8 0 0 0 0 5M20.5 9.5a8 8 0 0 1 0 5"/></symbol>
+  <symbol id="i-widget" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><circle cx="17" cy="17" r="4"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-tile" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 14h3m3 0h2"/></symbol>
+  <symbol id="i-headset" viewBox="0 0 24 24"><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></symbol>
+  <symbol id="i-alarm" viewBox="0 0 24 24"><circle cx="12" cy="13" r="7.5"/><path d="M12 9.5V13l2.5 2M4 5l3-2m13 2-3-2"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="m11 5-6 4H2v6h3l6 4V5Z"/><path d="M15 9a4.5 4.5 0 0 1 0 6m3-9a8.5 8.5 0 0 1 0 12"/></symbol>
+  <symbol id="i-app" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m10 9 5 3-5 3V9Z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2m0 15v2M2.5 12h2m15 0h2M5.3 5.3l1.4 1.4m10.6 10.6 1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-8 8H4l1.6-3A8 8 0 1 1 20 12Z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 7-5 5 5 5m8-10 5 5-5 5"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+</svg>
+
+<header class="wrap top">
+  <a class="home" href="/en/" aria-label="C520 home">C520</a>
+  <div class="brand"><img src="../icon.svg" alt="" width="32" height="32"><span>Say &amp; Done</span></div>
+  <a class="lang" href="../" lang="zh-Hant-TW" hreflang="zh-Hant-TW">中文</a>
+  <a class="btn" href="https://c520-dl.bb6800182.workers.dev/saydone/android" download="SayAndDone-v0.4.0.apk">Download</a>
+</header>
+
+<main id="main" class="wrap" tabindex="-1">
+  <div class="hero">
+    <img src="../icon-512.png" alt="Say &amp; Done icon: a white ring crossed by a teal sound wave on slate grey" width="160" height="160">
+    <div>
+      <p class="eyebrow">A simple Android voice assistant</p>
+      <h1>Say &amp; Done</h1>
+      <p class="lead">It only does simple things, but it does them fast.<br>Hold the power button, say it, and it is done.</p>
+      <div class="actions">
+        <a class="btn" href="https://c520-dl.bb6800182.workers.dev/saydone/android" download="SayAndDone-v0.4.0.apk"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>Download APK</a>
+        <a class="btn ghost" href="https://github.com/bb6800182-boop/saydone" target="_blank" rel="noopener noreferrer"><svg class="ic" aria-hidden="true"><use href="#i-code"/></svg>Source<span class="sr-only"> (GitHub, opens in a new tab)</span></a>
+      </div>
+      <p class="meta">v0.4.0 · about 220 KB · Android 12 or later<br>Free, MIT open source · works without AI</p>
+    </div>
+  </div>
+
+  <section aria-labelledby="why">
+    <h2 id="why">Why I made it</h2>
+    <div class="story">
+      <p>After Google Assistant became Gemini, even small things like “set an alarm” or “turn on the flashlight” go through a large AI model.</p>
+      <p><strong>I only need simple actions, not a model that powerful.</strong> So Say &amp; Done handles common commands right on the phone: it acts as soon as you finish speaking, with no cloud round trip, no sign-in and no AI bill.</p>
+      <p>Only when it meets a sentence it does not understand can it hand that sentence to your own AI key, using the smallest, fastest model by default.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="how">
+    <h2 id="how">Always within reach</h2>
+    <p class="sub">None of these keep the microphone on, so they use no extra battery.</p>
+    <div class="grid">
+      <div class="card"><svg class="ic" aria-hidden="true"><use href="#i-power"/></svg><h3>Hold the power button</h3><p>Set “Press and hold power button” to the digital assistant in system settings.</p></div>
+      <div class="card"><svg class="ic" aria-hidden="true"><use href="#i-tap"/></svg><h3>Double-tap the back</h3><p>Pixel’s Quick Tap, with the action set to the digital assistant.</p></div>
+      <div class="card"><svg class="ic" aria-hidden="true"><use href="#i-widget"/></svg><h3>Home screen widget</h3><p>A microphone button: tap and it listens. Dark and light versions to suit your wallpaper.</p></div>
+      <div class="card"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><h3>Lock screen widget</h3><p>On Pixel phones from Android 16 QPR2 it can sit on the lock screen.</p></div>
+      <div class="card"><svg class="ic" aria-hidden="true"><use href="#i-tile"/></svg><h3>Quick Settings tile</h3><p>Pull down the notification shade and tap; or long-press the app icon and choose “Talk”.</p></div>
+      <div class="card"><svg class="ic" aria-hidden="true"><use href="#i-headset"/></svg><h3>Headset and car voice keys</h3><p>The voice key on a Bluetooth headset or steering wheel (if the device supports it).</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="say">
+    <h2 id="say">Say it and it is done</h2>
+    <p class="sub">All of these are handled on the phone, without AI. The app follows your phone’s language: English or Traditional Chinese.</p>
+    <div class="grid">
+      <div class="card"><svg class="ic" aria-hidden="true"><use href="#i-alarm"/></svg><h3>Alarms and timers</h3><ul class="says"><li>Wake me at 7 tomorrow morning</li><li>Set a timer for ten minutes</li><li>Remind me in ten minutes to turn off the stove</li></ul></div>
+      <div class="card"><svg class="ic" aria-hidden="true"><use href="#i-volume"/></svg><h3>Sound and screen</h3><ul class="says"><li>Unmute</li><li>Vibrate mode</li><li>Set the volume to fifty</li><li>Turn on Do Not Disturb</li><li>Make the screen brighter</li><li>Turn on the flashlight</li></ul></div>
+      <div class="card"><svg class="ic" aria-hidden="true"><use href="#i-app"/></svg><h3>Apps and music</h3><ul class="says"><li>Play some music</li><li>Play my liked songs</li><li>Play Taylor Swift</li><li>Next song</li><li>Pause</li><li>Open Maps</li></ul><p>“Play some music” continues where you left off; “play my liked songs” plays what you have liked. With a free YouTube key, “play Taylor Swift” starts right away; without one it finds the artist in YT Music and you tap to play.</p></div>
+      <div class="card"><svg class="ic" aria-hidden="true"><use href="#i-pin"/></svg><h3>Navigation and calls</h3><ul class="says"><li>Navigate to Central Station</li><li>Call Mom</li></ul><p>People with similar names are listed for you to choose, so it never calls the wrong one.</p></div>
+      <div class="card"><svg class="ic" aria-hidden="true"><use href="#i-sun"/></svg><h3>Time and weather</h3><ul class="says"><li>What time is it</li><li>What day is it</li><li>Will it rain tomorrow</li></ul></div>
+      <div class="card"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg><h3>AI (optional)</h3><p>Sentences the rules do not understand, and general questions, can go to your own Claude, DeepSeek or OpenAI key, answering in about a second. Everything above works without one.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="routine">
+    <h2 id="routine">Routines: one phrase, several actions</h2>
+    <p class="sub">Choose the trigger phrase and what should happen. “What to do” is written the way you would say it, one line per action. You can also tell the assistant what to call you.</p>
+    <ol class="flow">
+      <li><b>You say</b><span>“I’m home”</span></li>
+      <li><b>It answers</b><span>“Alex, welcome home”</span></li>
+      <li><b>Then it does</b><span>unmute, media volume to 70, Do Not Disturb off</span></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="install">
+    <h2 id="install">Install and set up</h2>
+    <ol class="steps">
+      <li><div><b>Download and install the APK</b><span>It is not on Google Play. Open this page on your phone, tap “Download APK”, and allow your browser to install unknown apps when asked.</span></div></li>
+      <li><div><b>Make it your default assistant</b><span>Open Say &amp; Done. The first item under Settings takes you to the system’s “Default digital assistant app”; choose “Say &amp; Done”.</span></div></li>
+      <li><div><b>Allow the microphone</b><span>Used to hear you. Contacts, location, calendar and other permissions are optional.</span></div></li>
+      <li><div><b>Choose how to call it</b><span>“Ways to call the assistant” on the Help tab has a button for each method, for example setting “Press and hold power button” to the digital assistant.</span></div></li>
+      <li><div><b>(Optional) Add an AI key</b><span>It works without one. To have it answer general questions, expand “AI (optional)” under Settings, add a key and tap “Test connection”.</span></div></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="faq">
+    <h2 id="faq">Questions</h2>
+    <details id="faq-wake">
+      <summary>Why is there no wake word?<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></summary>
+      <div class="faq-a"><p>The low-power chip that listens for wake words is reserved for the phone’s built-in assistant. A third-party app would have to keep the microphone and processor running all the time, which drains the battery and leaves the microphone indicator on. So Say &amp; Done uses the power button, Quick Tap and widgets instead.</p></div>
+    </details>
+    <details id="faq-ai">
+      <summary>Do I need an AI key? Does it cost money?<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></summary>
+      <div class="faq-a"><p>No. Alarms, timers, volume, silent mode, flashlight, brightness, Do Not Disturb, music, opening apps, navigation, calls, weather and routines are all handled on the phone.</p><p>With a key, only sentences the rules do not understand are sent out, billed by the AI service you choose. The default is the smallest, cheapest model, so each sentence costs very little.</p></div>
+    </details>
+    <details id="faq-lang">
+      <summary>Which languages does it understand?<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></summary>
+      <div class="faq-a"><p>English and Traditional Chinese (Mandarin). It follows your phone’s language: on a Chinese phone the screens, voice commands and spoken replies are in Chinese; on any other language they are in English. English voice commands are new in 0.4.0, so if a sentence is not understood, try a simpler wording or tell me by email.</p></div>
+    </details>
+    <details id="faq-lock">
+      <summary>Does it work on the lock screen?<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></summary>
+      <div class="faq-a"><p>Holding the power button works on the lock screen too. Commands that open another app, such as navigation, ask you to unlock first. This is an Android security rule.</p></div>
+    </details>
+    <details id="faq-privacy">
+      <summary>Is what I say uploaded?<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></summary>
+      <div class="faq-a"><p>Speech recognition is done by the Google speech service on your phone. Say &amp; Done itself collects nothing and has no analytics.</p><p>Only three things are ever sent out: with an AI key, the one sentence the rules do not understand goes to the AI service you chose; with a YouTube key, the song or artist you asked for is looked up on YouTube; and a weather check sends your approximate location to the Open-Meteo weather service. Keys stay on your phone and are not backed up or transferred.</p></div>
+    </details>
+    <details id="faq-rename">
+      <summary>I installed 0.2.x. How do I update?<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></summary>
+      <div class="faq-a"><p>From 0.3.0 the package name changed along with the name Say &amp; Done, so your phone treats it as a different app and it cannot be installed over the old one.</p><p>Install the new version, make it the default assistant, set up your routines and keys again, then remove the old app. Later updates install normally.</p></div>
+    </details>
+    <details id="faq-phone">
+      <summary>Which phones are supported?<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></summary>
+      <div class="faq-a"><p>Android 12 or later with the Google speech service. Developed and tested on a Pixel 7 Pro (Android 17). Quick Tap and lock screen widgets are Pixel features; other brands have their own settings.</p></div>
+    </details>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <p>Privacy: no data collected, no analytics. AI and YouTube keys stay on your phone.</p>
+  <p>Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo.com</a> (CC BY 4.0).</p>
+  <p>This project is not affiliated with Google, Anthropic, OpenAI or DeepSeek. Android, Google and Gemini are trademarks of Google LLC; Claude is a trademark of Anthropic; OpenAI is a trademark of OpenAI.</p>
+  <p>Source: <a href="https://github.com/bb6800182-boop/saydone" target="_blank" rel="noopener noreferrer">GitHub</a> (MIT License) · Contact: <a href="mailto:bb6800182@gmail.com">bb6800182@gmail.com</a></p>
+  <p><a href="/en/">More from C520</a></p>
+  <p>© 2026 C520</p>
+</footer>
+<script>
+const openQ = id => { const d = document.getElementById(id); if (d && d.tagName === 'DETAILS') d.open = true; };
+document.querySelectorAll('a[href^="#faq-"]').forEach(a => a.addEventListener('click', () => openQ(a.hash.slice(1))));
+openQ(decodeURIComponent(location.hash.slice(1)));
+</script>
+</body>
+</html>
