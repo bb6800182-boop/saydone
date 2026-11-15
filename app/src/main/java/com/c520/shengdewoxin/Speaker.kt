@@ -33,9 +33,7 @@ object Speaker {
             pending = null
             return
         }
-        // 念的語言跟著介面：中文手機念中文，其他念手機的語言（沒有語音資料就念英文）
-        val r = t.setLanguage(if (L.zh) Locale.TAIWAN else Locale.getDefault())
-        if (r == TextToSpeech.LANG_MISSING_DATA || r == TextToSpeech.LANG_NOT_SUPPORTED) t.setLanguage(if (L.zh) Locale.CHINESE else Locale.US)
+        applyLanguage(t)
         t.setAudioAttributes(
             AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_ASSISTANT)
@@ -71,7 +69,19 @@ object Speaker {
         }
     }
 
+    /** 這個 TTS 目前設成中文（true）還是英文（false）；助理服務常駐，語言之後才換的話要重設。 */
+    private var spokenZh: Boolean? = null
+
+    /** 念的語言跟著介面：中文手機念中文，其他念手機的語言（沒有語音資料就念英文）。 */
+    private fun applyLanguage(t: TextToSpeech) {
+        val zh = L.zh
+        val r = t.setLanguage(if (zh) Locale.TAIWAN else Locale.getDefault())
+        if (r == TextToSpeech.LANG_MISSING_DATA || r == TextToSpeech.LANG_NOT_SUPPORTED) t.setLanguage(if (zh) Locale.CHINESE else Locale.US)
+        spokenZh = zh
+    }
+
     private fun say(text: String, onDone: (() -> Unit)?) {
+        tts?.let { if (spokenZh != L.zh) applyLanguage(it) }
         val id = "u${++seq}"
         if (onDone != null) done[id] = onDone
         if (tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, id) != TextToSpeech.SUCCESS) finish(id)
