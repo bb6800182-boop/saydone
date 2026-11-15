@@ -14,8 +14,8 @@ android {
         // Android 12 起：裝置端語音、RoleManager、FUSED 定位、App 自己的深淺色設定都有，程式不用寫舊版分支
         minSdk = 31
         targetSdk = 36
-        versionCode = 6
-        versionName = "0.4.0"
+        versionCode = 7
+        versionName = "0.4.1"
     }
 
     // 簽章放在專案資料夾旁邊的 voice-assistant-signing（不進版控；用 Dropbox 同步，每台電腦都用同一份）：

@@ -15,10 +15,13 @@ enum class Provider(val label: String, val defModel: String, val defUrl: String)
 }
 
 /** 外觀：淺色（預設）、深色、跟隨系統。 */
-enum class Look(val label: String) {
-    LIGHT(L.t("淺色", "Light")),
-    DARK(L.t("深色", "Dark")),
-    SYSTEM(L.t("跟隨系統", "System")),
+enum class Look(private val zh: String, private val en: String) {
+    LIGHT("淺色", "Light"),
+    DARK("深色", "Dark"),
+    SYSTEM("跟隨系統", "System");
+
+    /** 每次用到才依目前的語言取字（enum 只初始化一次，直接存字的話換語言不會跟著變）。 */
+    val label: String get() = L.t(zh, en)
 }
 
 /** 設定只存在本機（App 私有空間、不備份），金鑰不會離開這支手機。 */
