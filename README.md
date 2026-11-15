@@ -6,7 +6,7 @@
 
 - 免費、開放原始碼（[MIT 授權](LICENSE)）。
 - 不收集任何資料，沒有使用統計，沒有廣告。
-- 用 APK 安裝，沒有上架 Google Play：到[說明網站](https://c520.pages.dev/shengdewoxin/)下載，安裝步驟與常見問題也在那裡。
+- 用 APK 安裝，沒有上架 Google Play：到[說明網站](https://c520.pages.dev/saydone/)下載，安裝步驟與常見問題也在那裡。
 
 ## 功能
 

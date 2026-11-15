@@ -9,9 +9,9 @@
 <meta property="og:locale" content="zh_TW">
 <meta property="og:title" content="聲得我心｜取代 Google 助理的簡單語音助理">
 <meta property="og:description" content="只做簡單的事，但做得快。常用指令在手機上直接判斷，不需要呼叫大型 AI。">
-<meta property="og:url" content="https://c520.pages.dev/shengdewoxin/">
-<meta property="og:image" content="https://c520.pages.dev/shengdewoxin/icon-512.png">
-<link rel="canonical" href="https://c520.pages.dev/shengdewoxin/">
+<meta property="og:url" content="https://c520.pages.dev/saydone/">
+<meta property="og:image" content="https://c520.pages.dev/saydone/icon-512.png">
+<link rel="canonical" href="https://c520.pages.dev/saydone/">
 <meta name="theme-color" content="#F1F5F9">
 <meta name="color-scheme" content="light">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -160,7 +160,7 @@ details[open] summary .ic { transform: rotate(180deg); }
 <header class="wrap top">
   <a class="home" href="/" aria-label="回 C520 首頁">C520</a>
   <div class="brand"><img src="icon.svg" alt="" width="32" height="32"><span>聲得我心</span></div>
-  <a class="btn" href="https://c520-dl.bb6800182.workers.dev/shengdewoxin/android" download="聲得我心-v0.2.2.apk">下載</a>
+  <a class="btn" href="https://c520-dl.bb6800182.workers.dev/saydone/android" download="聲得我心-v0.3.0.apk">下載</a>
 </header>
 
 <main id="main" class="wrap" tabindex="-1">
@@ -171,10 +171,10 @@ details[open] summary .ic { transform: rotate(180deg); }
       <h1>聲得我心</h1>
       <p class="lead">只做簡單的事，但做得快。<br>長按電源鍵，說一句就幫你做好。</p>
       <div class="actions">
-        <a class="btn" href="https://c520-dl.bb6800182.workers.dev/shengdewoxin/android" download="聲得我心-v0.2.2.apk"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>下載 APK</a>
-        <a class="btn ghost" href="https://github.com/bb6800182-boop/shengdewoxin" target="_blank" rel="noopener noreferrer"><svg class="ic" aria-hidden="true"><use href="#i-code"/></svg>原始碼<span class="sr-only">（GitHub，另開分頁）</span></a>
+        <a class="btn" href="https://c520-dl.bb6800182.workers.dev/saydone/android" download="聲得我心-v0.3.0.apk"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>下載 APK</a>
+        <a class="btn ghost" href="https://github.com/bb6800182-boop/saydone" target="_blank" rel="noopener noreferrer"><svg class="ic" aria-hidden="true"><use href="#i-code"/></svg>原始碼<span class="sr-only">（GitHub，另開分頁）</span></a>
       </div>
-      <p class="meta">v0.2.2・約 180 KB・Android 12 以上<br>免費、MIT 開源・不需要 AI 也能用</p>
+      <p class="meta">v0.3.0・約 180 KB・Android 12 以上<br>免費、MIT 開源・不需要 AI 也能用</p>
     </div>
   </div>
 
@@ -252,6 +252,10 @@ details[open] summary .ic { transform: rotate(180deg); }
       <summary>我說的話會被上傳嗎？<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></summary>
       <div class="faq-a"><p>語音辨識由手機上的 Google 語音服務處理。聲得我心自己不收集任何資料、沒有使用統計。</p><p>會送出去的只有三種：填了 AI 金鑰時，規則聽不懂的那一句話送給你選的 AI 服務；填了 YouTube 金鑰時，指定的歌名或歌手送給 YouTube 查詢；查天氣時，大概位置送給 Open-Meteo 天氣服務。金鑰只存在手機，不備份、不轉移。</p></div>
     </details>
+    <details id="faq-rename">
+      <summary>裝過 0.2.x，怎麼更新到 0.3.0？<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></summary>
+      <div class="faq-a"><p>0.3.0 起有了英文名 Say &amp; Done，套件名稱也跟著換了，對手機來說是另一個 App，沒辦法直接蓋過去。</p><p>請下載安裝新版，把它設成預設數位助理，情境和金鑰重新設定一次，再移除舊版。之後的更新就能直接安裝。</p></div>
+    </details>
     <details id="faq-phone">
       <summary>支援哪些手機？<svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg></summary>
       <div class="faq-a"><p>Android 12 以上、有 Google 語音服務的手機。在 Pixel 7 Pro（Android 17）上開發與測試；背面點兩下和鎖定畫面小工具是 Pixel 的功能，其他品牌的手機看各自的設定。</p></div>
@@ -263,7 +267,7 @@ details[open] summary .ic { transform: rotate(180deg); }
   <p>隱私：不收集任何資料、沒有使用統計；AI、YouTube 金鑰只存在你的手機。</p>
   <p>天氣資料來自 <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo.com</a>（CC BY 4.0）。</p>
   <p>本專案與 Google、Anthropic、OpenAI、DeepSeek 沒有關係；Android、Google、Gemini 是 Google LLC 的商標，Claude 是 Anthropic 的商標，OpenAI 是 OpenAI 的商標。</p>
-  <p>原始碼：<a href="https://github.com/bb6800182-boop/shengdewoxin" target="_blank" rel="noopener noreferrer">GitHub</a>（MIT 授權）・聯絡：<a href="mailto:bb6800182@gmail.com">bb6800182@gmail.com</a></p>
+  <p>原始碼：<a href="https://github.com/bb6800182-boop/saydone" target="_blank" rel="noopener noreferrer">GitHub</a>（MIT 授權）・聯絡：<a href="mailto:bb6800182@gmail.com">bb6800182@gmail.com</a></p>
   <p><a href="/">更多作品</a></p>
   <p>© 2026 C520</p>
 </footer>

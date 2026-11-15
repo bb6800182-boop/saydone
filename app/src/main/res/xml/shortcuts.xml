@@ -10,6 +10,6 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="com.c520.shengdewoxin.TriggerActivity"
-            android:targetPackage="com.c520.shengdewoxin" />
+            android:targetPackage="com.c520.saydone" />
     </shortcut>
 </shortcuts>

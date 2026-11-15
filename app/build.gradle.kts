@@ -5,16 +5,17 @@ plugins {
 }
 
 android {
+    // 程式碼的套件（namespace）維持 com.c520.shengdewoxin；對外的套件名稱（applicationId）2026-11-15 隨英文名改成 com.c520.saydone
     namespace = "com.c520.shengdewoxin"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.c520.shengdewoxin"
+        applicationId = "com.c520.saydone"
         // Android 12 起：裝置端語音、RoleManager、FUSED 定位、App 自己的深淺色設定都有，程式不用寫舊版分支
         minSdk = 31
         targetSdk = 36
-        versionCode = 4
-        versionName = "0.2.2"
+        versionCode = 5
+        versionName = "0.3.0"
     }
 
     // 簽章放在專案資料夾旁邊的 voice-assistant-signing（不進版控；用 Dropbox 同步，每台電腦都用同一份）：

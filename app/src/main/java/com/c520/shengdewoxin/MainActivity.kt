@@ -590,8 +590,8 @@ class MainActivity : Activity() {
     companion object {
         private const val REQ_PERMS = 1
         private const val KEY_TAB = "tab"
-        private const val SITE = "https://c520.pages.dev/shengdewoxin/"
-        private const val REPO = "https://github.com/bb6800182-boop/shengdewoxin"
+        private const val SITE = "https://c520.pages.dev/saydone/"
+        private const val REPO = "https://github.com/bb6800182-boop/saydone"
         private const val YT_CONSOLE = "https://console.cloud.google.com/apis/library/youtube.googleapis.com"
 
         private val EXAMPLES = listOf(
