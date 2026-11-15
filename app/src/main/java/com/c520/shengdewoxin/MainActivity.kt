@@ -351,6 +351,15 @@ class MainActivity : Activity() {
                     ui.button("介紹網頁", false) { open(Intent(Intent.ACTION_VIEW, Uri.parse(SITE))) },
                     ui.button("原始碼", false) { open(Intent(Intent.ACTION_VIEW, Uri.parse(REPO))) },
                 ),
+                ui.gap(16),
+                ui.text(About.CONTACT_TEXT, 13f, R.color.ink_subtle),
+                ui.gap(4),
+                ui.text(About.MORE_TEXT, 13f, R.color.ink_subtle),
+                ui.gap(12),
+                ui.row(
+                    ui.button("寄信給作者", false) { About.mail(this, "聲得我心", ver) },
+                    ui.button("更多軟體", false) { About.more(this) },
+                ),
             ),
             ui.lp(16),
         )
